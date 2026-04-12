@@ -91,9 +91,12 @@ const AdminDashboard = () => {
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
-        <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-main)' }}>Admin Command</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Operation Intelligence Dashboard</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <img src="/logo.png" alt="Logo" style={{ width: '60px', height: '60px', borderRadius: '12px' }} />
+          <div>
+            <h1 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-main)' }}>Admin Command</h1>
+            <p style={{ color: 'var(--text-secondary)' }}>Operation Intelligence Dashboard</p>
+          </div>
         </div>
         <div style={{ display: 'flex', gap: '15px' }}>
           <button className="btn-primary" onClick={exportToCSV} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#0f172a' }}>

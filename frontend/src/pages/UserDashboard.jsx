@@ -60,9 +60,12 @@ const UserDashboard = () => {
   return (
     <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <div>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 700 }}>Service Portal</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Welcome back, {user.name}</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <img src="/logo.png" alt="Logo" style={{ width: '45px', height: '45px', borderRadius: '8px' }} />
+          <div>
+            <h1 style={{ fontSize: '1.8rem', fontWeight: 700 }}>Service Portal</h1>
+            <p style={{ color: 'var(--text-secondary)' }}>Welcome back, {user.name}</p>
+          </div>
         </div>
         <button onClick={logout} className="glass" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', color: '#dc2626', background: '#fee2e2' }}>
           <LogOut size={18} /> Logout

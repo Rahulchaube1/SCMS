@@ -1,4 +1,4 @@
-# 🧊 Smart Complaint Management System (SCMS) - Pro Edition
+# <img src="frontend/public/logo.png" width="40" height="40" style="vertical-align: middle;"> 🧊 Smart Complaint Management System (SCMS) - Pro Edition
 
 A high-fidelity, full-stack real-time platform designed for seamless issue tracking, collaborative resolution, and administrative intelligence. Built with the **MERN** stack and featuring a premium **"Clean Arctic" Light Mode** design.
 

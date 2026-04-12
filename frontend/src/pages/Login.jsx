@@ -32,8 +32,9 @@ const Login = () => {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <div className="glass" style={{ padding: '40px', width: '400px' }}>
-        <h2 style={{ marginBottom: '24px', textAlign: 'center' }}>Welcome Back</h2>
+      <div className="glass" style={{ padding: '40px', width: '400px', textAlign: 'center' }}>
+        <img src="/logo.png" alt="Nano Banana Logo" style={{ width: '80px', marginBottom: '20px', borderRadius: '12px' }} />
+        <h2 style={{ marginBottom: '24px' }}>Welcome Back</h2>
         <form onSubmit={handleSubmit}>
           <label>Email</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
