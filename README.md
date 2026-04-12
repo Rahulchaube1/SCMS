@@ -8,6 +8,7 @@ A high-fidelity, full-stack real-time platform designed for seamless issue track
 
 SCMS Pro uses a modern decoupled architecture with real-time bidirectional communication.
 
+### 1. High-Level System Map
 ```mermaid
 graph TD
     subgraph Client ["Frontend (React + Vite)"]
@@ -35,6 +36,70 @@ graph TD
     SIO <--> DB
 ```
 
+### 2. User Flow: Real-Time Communication
+This diagram shows how a status update from an Admin is reflected instantly on the User's screen.
+
+```mermaid
+sequenceDiagram
+    participant Admin as Admin Dashboard
+    participant Server as Node.js Server
+    participant Socket as Socket.io Hub
+    participant User as User Dashboard
+
+    Admin->>Server: PUT /api/complaints/:id (Status: Resolved)
+    Server->>Server: Update MongoDB
+    Server-->>Admin: 200 OK (Success)
+    Server->>Socket: Emit 'status_updated' to Room(userId)
+    Socket->>User: Broadcast 'status_updated'
+    User->>User: Update UI State (Real-Time)
+```
+
+---
+
+## 🗄️ Database & Entity Relationships
+
+The system maintains high relational integrity between accounts and their respective data entities.
+
+```mermaid
+erDiagram
+    USER ||--o{ COMPLAINT : submits
+    USER ||--o{ COMMENT : writes
+    COMPLAINT ||--o{ COMMENT : contains
+
+    USER {
+        string name
+        string email
+        string password
+        string role
+    }
+    COMPLAINT {
+        string title
+        string description
+        string status
+        string priority
+        string category
+    }
+    COMMENT {
+        string text
+        date createdAt
+    }
+```
+
+---
+
+## 🔄 Complaint Lifecycle
+
+Tickets follow a strictly managed state machine to ensure accountability.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Pending: Ticket Created
+    Pending --> InProgress: Admin assigned / investigation starts
+    InProgress --> Pending: Additional info needed
+    InProgress --> Resolved: Issue fixed & confirmed
+    Resolved --> [*]
+```
+
 ---
 
 ## 🌟 Key Features
@@ -43,40 +108,29 @@ graph TD
 - **Real-Time Sync**: Powered by Socket.io, status updates and discussions reflect instantly across all sessions without refreshing.
 - **Live Connection indicator**: Visual rotation icon in dashboards confirms active real-time connectivity.
 
-### 🛡️ Secure access
+### 🛡️ Secure access & logic
 - **Dual-Role Auth**: Dedicated flows for **Users** and **Administrators**.
-- **Guest Access**: Instant demo capability via a secure shared guest session.
-- **JWT Protection**: All sensitive routes are protected by JSON Web Token middleware.
+- **JWT Protection**: Tokens are generated on login and required for all subsequent API requests.
+- **Priority Intelligence**: Intelligent heat-mapping for tickets based on urgency.
 
 ### 📊 Management & analytics
-- **Priority System**: Three-tier prioritization (**Low**, **Medium**, **High**) with visual heat-mapping.
+- **Priority System**: Three-tier prioritization (**Low**, **Medium**, **High**).
 - **Discussions**: Real-time comment threads on every ticket for collaborative troubleshooting.
 - **Admin Intelligence**: 
   - **Analytics**: Visual distribution of statuses using Recharts.
   - **Exporting**: One-click **CSV download** for auditing and reporting.
-  - **Smart Search**: Real-time filtering across the entire ticket database.
 
 ---
 
-## 🗄️ Database Schema
+## 🛠️ Component Breakdown (Frontend)
 
-### User Model
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `name` | String | Full name of the user |
-| `email` | String | Unique email for login |
-| `password` | String | Hashed (Bcrypt) password |
-| `role` | String | `user` or `admin` |
+### Context Providers
+1.  **AuthContext**: Manages the global authentication state, token persistence, and user role redirection.
+2.  **RealTimeContext**: Establishes the Socket.io connection and manages room-joining logic based on the user's unique ID.
 
-### Complaint Model
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `title` | String | Brief summary of the issue |
-| `description`| String | Detailed explanation |
-| `category` | String | `Technical`, `Billing`, `General`, etc. |
-| `status` | String | `Pending`, `In Progress`, `Resolved` |
-| `priority` | String | `Low`, `Medium`, `High` |
-| `userId` | ObjectId | Reference to the author (User) |
+### Core Viewports
+- **User Dashboard**: Focused on clean ticket submission and individual status tracking.
+- **Admin Dashboard**: A high-density "Control Center" for bulk filtering, analytic visualization, and real-time status modulation.
 
 ---
 
@@ -118,7 +172,6 @@ From the project root, run the multi-process starter:
 ```powershell
 ./run.ps1
 ```
-*(Alternatively, run `npm install` in both `frontend` and `backend` directories first).*
 
 ---
 
