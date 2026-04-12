@@ -56,6 +56,29 @@ sequenceDiagram
 
 ---
 
+## 📂 Project Directory Structure
+
+```text
+everestqblog/
+├── backend/                # Express.js Server
+│   ├── middleware/         # Auth & Security Middlewares
+│   ├── models/             # Mongoose Schemas (User, Complaint, Comment)
+│   ├── routes/             # RESTful API Endpoints
+│   ├── .env                # Server configuration (Secrets)
+│   └── server.js           # Server Entry Point & Socket initialization
+├── frontend/               # React Application (Vite)
+│   ├── src/
+│   │   ├── components/     # UI Components (Comments, etc.)
+│   │   ├── context/        # Auth & Socket Context Providers
+│   │   ├── pages/          # Viewports (Dashboards, Auth)
+│   │   ├── App.jsx         # Routing & Protected Routes
+│   │   └── index.css       # "Clean Arctic" Design System
+│   └── vite.config.js      # Build & Proxy settings
+└── README.md               # Documentation
+```
+
+---
+
 ## 🗄️ Database & Entity Relationships
 
 The system maintains high relational integrity between accounts and their respective data entities.
@@ -102,83 +125,58 @@ stateDiagram-v2
 
 ---
 
-## 🌟 Key Features
+## 🛡️ Security Architecture
+
+### 1. Authentication Flow
+- **Password Hashing**: Passwords are never stored in plain text. We utilize `bcryptjs` with a salt factor of 10.
+- **JWT Authorization**: Upon login, a JSON Web Token is signed with the `JWT_SECRET`.
+- **Protected Routes**: The frontend implements a `ProtectedRoute` wrapper that verifies token presence and role authorization before rendering dashboards.
+
+### 2. Socket Security
+- **Room Isolation**: Users only join a Socket room mapped to their unique `userId`. This ensures they only receive real-time updates for their own complaints.
+
+---
+
+## 🌟 Pro Features Deep-Dive
 
 ### 🚀 Engine & performance
-- **Real-Time Sync**: Powered by Socket.io, status updates and discussions reflect instantly across all sessions without refreshing.
-- **Live Connection indicator**: Visual rotation icon in dashboards confirms active real-time connectivity.
+- **Socket.io Integration**: Low-latency bidirectional communication for instant UI reactivity.
+- **Recharts Analytics**: Dynamic data visualization for Admin workload assessment.
 
-### 🛡️ Secure access & logic
-- **Dual-Role Auth**: Dedicated flows for **Users** and **Administrators**.
-- **JWT Protection**: Tokens are generated on login and required for all subsequent API requests.
-- **Priority Intelligence**: Intelligent heat-mapping for tickets based on urgency.
-
-### 📊 Management & analytics
-- **Priority System**: Three-tier prioritization (**Low**, **Medium**, **High**).
-- **Discussions**: Real-time comment threads on every ticket for collaborative troubleshooting.
-- **Admin Intelligence**: 
-  - **Analytics**: Visual distribution of statuses using Recharts.
-  - **Exporting**: One-click **CSV download** for auditing and reporting.
+### 📊 Management Tools
+- **CSV Data Export**: One-click generation of Excel-compatible reports for auditing.
+- **Priority Scaling**: Heat-mapped indicators (High/Red, Medium/Orange, Low/Grey) to manage urgency.
 
 ---
 
-## 🛠️ Component Breakdown (Frontend)
+## 🚀 Installation & Deployment
 
-### Context Providers
-1.  **AuthContext**: Manages the global authentication state, token persistence, and user role redirection.
-2.  **RealTimeContext**: Establishes the Socket.io connection and manages room-joining logic based on the user's unique ID.
-
-### Core Viewports
-- **User Dashboard**: Focused on clean ticket submission and individual status tracking.
-- **Admin Dashboard**: A high-density "Control Center" for bulk filtering, analytic visualization, and real-time status modulation.
-
----
-
-## 📡 API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Create a new account
-- `POST /api/auth/login` - Authenticate and receive JWT
-- `POST /api/auth/guest-login` - High-speed demo access
-
-### Complaints
-- `GET /api/complaints` - Fetch all complaints (Admin only, includes search/filter)
-- `GET /api/complaints/user/:id` - Fetch tickets for a specific user
-- `POST /api/complaints` - Submit a new ticket
-- `PUT /api/complaints/:id` - Update status/priority (Admin only)
-
-### Discussions
-- `GET /api/complaints/:id/comments` - Fetch thread history
-- `POST /api/complaints/:id/comments` - Post a real-time message
-
----
-
-## 🚀 Installation & Setup
-
-### 1. Prerequisites
-- **Node.js** (v16+)
-- **MongoDB Atlas** Account
-
-### 2. Configure Environment
-Create a `.env` file in the `backend/` directory:
-```env
-PORT=5000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_signing_key
-```
-
-### 3. Quick Start
-From the project root, run the multi-process starter:
+### 1. Local Setup
 ```powershell
+# Clone the repository
+git clone https://github.com/Rahulchaube1/SCMS.git
+
+# Install dependencies & run
 ./run.ps1
 ```
+
+### 2. Environment Variables
+| Key | Description |
+| :--- | :--- |
+| `PORT` | Local server port (default: 5000) |
+| `MONGODB_URI` | MongoDB Atlas cluster connection string |
+| `JWT_SECRET` | Secret key for signing authorization tokens |
+
+### 3. Deployment Strategy
+- **Frontend**: Deploy `frontend/` to **Vercel** or **Netlify**. Ensure `axios` base URLs are updated to your production API.
+- **Backend**: Deploy `backend/` to **Render** or **Heroku**. Set your environment variables in the provider dashboard.
 
 ---
 
 ## 🎨 Design System: "Clean Arctic"
-- **Tokens**: Custom CSS variables for primary sapphire, slate text, and emerald success states.
+- **Background**: Soft #f8fafc with subtle indigo radial gradients.
 - **Glassmorphism**: 70% opacity white backgrounds with 12px backdrop blur.
-- **Shadows**: Low-altitude soft shadows for depth without clutter.
+- **Badges**: Pastel-themed semantic indicators for Status and Priority.
 
 ---
 
