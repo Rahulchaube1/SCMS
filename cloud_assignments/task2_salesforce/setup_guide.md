@@ -1,44 +1,51 @@
-# Salesforce Deployment & Domain Setup Guide
+# Salesforce Deployment and Domain Setup Guide
 
-Follow these steps to deploy your application logic and configure your domain on Salesforce.
+This task includes a deployable Salesforce DX structure under `force-app` and `manifest/package.xml`.
 
-## 1. Create a Domain Name (My Domain)
-Salesforce requires a custom domain for deploying Lightning Web Components (LWCs).
+## 1. Create and Deploy My Domain
 
-1. Log in to your Salesforce Developer Edition.
-2. Click the **Gear Icon** (Setup) and type **"My Domain"** in the Quick Find box.
-3. Choose a unique name for your domain (e.g., `rahulcloud-dev-ed`).
-4. Click **Check Availability**.
-5. Once confirmed, click **Register Domain**.
-6. Wait for the email confirmation, then log back in.
-7. Click **Deploy to Users** in the "My Domain" settings page.
+1. Log in to your Salesforce Developer/Trial org.
+2. Go to Setup and search for **My Domain**.
+3. Set a unique domain name, check availability, and register.
+4. After provisioning, click **Deploy to Users**.
 
-## 2. Prepare Data Objects
-Before deploying the code, create the custom object:
-1. Go to **Object Manager** -> **Create** -> **Custom Object**.
-2. **Label**: Cloud Task
-3. **Plural Label**: Cloud Tasks
-4. **Object Name**: `Cloud_Task`
-5. Create a Custom Field:
-   - **Type**: Long Text Area
-   - **Field Label**: Description
-   - **API Name**: `Description__c`
-   - **Type**: Picklist
-   - **Field Label**: Status
-   - **API Name**: `Status__c` (Values: New, In Progress, Completed)
+## 2. Create Required Custom Object
 
-## 3. Deploy the Application
-1. Use VS Code with **Salesforce Extension Pack**.
-2. Connect to your org with `SFDX: Authorize an Org`.
-3. Right-click the `CloudManager.cls` and select `SFDX: Deploy Source to Org`.
-4. Right-click the `cloudManagerComp` folder and select `SFDX: Deploy Source to Org`.
+Create object `Cloud_Task__c`:
 
-## 4. Deploy in Real Time
-1. Open the **App Launcher** (9 dots) and search for **"Sales"** or any app.
-2. Click the **Gear Icon** -> **Edit Page**.
-3. Locate **cloudManagerComp** under "Custom" components on the left sidebar.
-4. Drag and drop it onto the page.
-5. Click **Save** and **Activate**.
-6. Set as **Org Default** and click **Save**.
+1. Setup -> Object Manager -> Create -> Custom Object.
+2. Label: `Cloud Task`, Plural Label: `Cloud Tasks`.
+3. API Name: `Cloud_Task`.
 
-Your application is now live on your Salesforce custom domain!
+Create fields:
+
+1. `Description__c` as Long Text Area.
+2. `Status__c` as Picklist with values: `New`, `In Progress`, `Completed`.
+
+## 3. Deploy Apex + LWC from This Repo
+
+Prerequisites:
+
+1. Salesforce CLI (`sf`) installed.
+2. VS Code Salesforce Extension Pack installed.
+
+Commands:
+
+```bash
+cd cloud_assignments/task2_salesforce
+sf org login web --alias cloud-trial
+sf project deploy start --target-org cloud-trial --source-dir force-app
+```
+
+## 4. Real-Time App Deployment
+
+1. Open App Launcher and open any Lightning app (for example Sales).
+2. Click Gear -> **Edit Page**.
+3. Drag `cloudManagerComp` from Custom components onto the page.
+4. Click **Save** and **Activate** (App Default or Org Default).
+
+## 5. Verify on Your Domain
+
+1. Open your My Domain URL.
+2. Confirm you can create tasks from `cloudManagerComp`.
+3. Confirm newly created tasks immediately appear in the list.

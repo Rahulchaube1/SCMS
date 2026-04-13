@@ -8,9 +8,10 @@ ownCloud provides a private file-sharing and collaboration platform.
 ### Deployment (Using Docker)
 1. Ensure **Docker** and **Docker Compose** are installed on your machine.
 2. Navigate to `cloud_assignments/task3_private_cloud/owncloud/`.
-3. Run the following command:
+3. Run the starter script:
    ```bash
-   docker-compose up -d
+   chmod +x start_owncloud.sh
+   ./start_owncloud.sh
    ```
 4. Access the application at `http://localhost:8080`.
 5. Login with:
@@ -27,28 +28,13 @@ OpenStack is the industry standard for creating private cloud infrastructure.
 - **Network**: Internet access for dependency installation.
 
 ### Installation via DevStack (Single Node)
-1. **Create a Stack user**:
+1. Run the automated setup script:
    ```bash
-   sudo useradd -s /bin/bash -d /opt/stack -m stack
-   sudo chmod +x /opt/stack
-   echo "stack ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/stack
-   sudo -u stack -i
+   cd cloud_assignments/task3_private_cloud/openstack
+   chmod +x deploy_devstack.sh
+   ./deploy_devstack.sh
    ```
-2. **Clone DevStack**:
-   ```bash
-   git clone https://opendev.org/openstack/devstack
-   cd devstack
-   ```
-3. **Copy Configuration**:
-   Move the provided `local.conf` from this project to the `devstack` directory.
-   ```bash
-   cp /path/to/local.conf .
-   ```
-4. **Run the Installation**:
-   ```bash
-   ./stack.sh
-   ```
-5. **Post-Installation**:
+2. **Post-Installation**:
    Once complete, access the OpenStack Dashboard (Horizon) via the IP address of your host.
    - **Login**: `admin`
    - **Password**: `password` (as defined in `local.conf`)
@@ -56,3 +42,12 @@ OpenStack is the industry standard for creating private cloud infrastructure.
 ### Verification
 - Run `openstack service list` to verify all cloud services (Nova, Keystone, Neutron, etc.) are active.
 - Create a virtual machine instance via the Horizon dashboard to verify the infrastructure is working.
+
+## 3. Integrate with Project Cloud
+
+Use OpenStack to provision VM(s) that host your app workloads:
+
+1. Create VM-A for polyglot app (Java + Python services).
+2. Create VM-B for ownCloud if you want clean isolation.
+3. Configure security groups for ports `8080` (Java/ownCloud) and `8000` (Python internal).
+4. Point DNS/subdomains to floating IPs for production-style access.
