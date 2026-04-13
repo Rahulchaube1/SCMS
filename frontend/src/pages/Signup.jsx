@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { apiUrl } from '../config';
 
 const Signup = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'user' });
@@ -9,7 +10,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/auth/register', formData);
+      await axios.post(apiUrl('/api/auth/register'), formData);
       alert('Account created! Please log in.');
       navigate('/login');
     } catch (err) {
@@ -19,7 +20,7 @@ const Signup = () => {
 
   const handleGuestLogin = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/guest-login');
+      const res = await axios.post(apiUrl('/api/auth/guest-login'));
       const { token, ...user } = res.data;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));

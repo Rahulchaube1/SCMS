@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/RealTimeContext';
 import { LogOut, PlusCircle } from 'lucide-react';
 import Comments from '../components/Comments';
+import { apiUrl } from '../config';
 
 const UserDashboard = () => {
   const { user, token, logout } = useAuth();
@@ -16,7 +17,7 @@ const UserDashboard = () => {
     if (!user?.userId) return;
 
     try {
-      const res = await axios.get(`http://localhost:5000/api/complaints/user/${user.userId}`, {
+      const res = await axios.get(apiUrl(`/api/complaints/user/${user.userId}`), {
         headers: { Authorization: `Bearer ${token}` }
       });
       setComplaints(res.data);
@@ -49,7 +50,7 @@ const UserDashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/complaints', formData, {
+      await axios.post(apiUrl('/api/complaints'), formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setShowForm(false);

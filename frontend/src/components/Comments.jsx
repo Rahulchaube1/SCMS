@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/RealTimeContext';
 import { Send, MessageSquare } from 'lucide-react';
+import { apiUrl } from '../config';
 
 const Comments = ({ complaintId }) => {
   const [comments, setComments] = useState([]);
@@ -12,7 +13,7 @@ const Comments = ({ complaintId }) => {
 
   const fetchComments = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/complaints/${complaintId}/comments`, {
+      const res = await axios.get(apiUrl(`/api/complaints/${complaintId}/comments`), {
         headers: { Authorization: `Bearer ${token}` }
       });
       setComments(res.data);
@@ -41,7 +42,7 @@ const Comments = ({ complaintId }) => {
     e.preventDefault();
     if (!text.trim()) return;
     try {
-      await axios.post(`http://localhost:5000/api/complaints/${complaintId}/comments`, { text }, {
+      await axios.post(apiUrl(`/api/complaints/${complaintId}/comments`), { text }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setText('');

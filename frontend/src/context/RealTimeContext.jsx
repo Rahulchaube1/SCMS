@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
+import { SOCKET_URL } from '../config';
 
 const RealTimeContext = createContext();
 
@@ -9,7 +10,7 @@ export const RealTimeProvider = ({ children }) => {
   const socket = useMemo(() => {
     if (!token || !user) return null;
 
-    const newSocket = io('http://localhost:5000', {
+    const newSocket = io(SOCKET_URL, {
       auth: { token }
     });
 

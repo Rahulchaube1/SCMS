@@ -5,6 +5,7 @@ import { useSocket } from '../context/RealTimeContext';
 import { LogOut, Filter, Search, BarChart3 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import Comments from '../components/Comments';
+import { apiUrl } from '../config';
 
 const AdminDashboard = () => {
   const { token, logout } = useAuth();
@@ -16,7 +17,7 @@ const AdminDashboard = () => {
 
   const fetchAllComplaints = useCallback(async () => {
     try {
-      const url = `http://localhost:5000/api/complaints?status=${filter}&search=${search}`;
+      const url = apiUrl(`/api/complaints?status=${filter}&search=${search}`);
       const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -49,7 +50,7 @@ const AdminDashboard = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      await axios.put(`http://localhost:5000/api/complaints/${id}`, { status }, {
+      await axios.put(apiUrl(`/api/complaints/${id}`), { status }, {
         headers: { Authorization: `Bearer ${token}` }
       });
     } catch {
@@ -59,7 +60,7 @@ const AdminDashboard = () => {
 
   const updatePriority = async (id, priority) => {
     try {
-      await axios.put(`http://localhost:5000/api/complaints/${id}`, { priority }, {
+      await axios.put(apiUrl(`/api/complaints/${id}`), { priority }, {
         headers: { Authorization: `Bearer ${token}` }
       });
     } catch {

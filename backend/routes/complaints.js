@@ -50,7 +50,7 @@ router.post('/', auth, async (req, res) => {
     
     // Broadcast new complaint (optional, for admin)
     const io = req.app.get('io');
-    io.emit('new_complaint', complaint);
+    if (io) io.emit('new_complaint', complaint);
 
     res.status(201).json(complaint);
   } catch (error) {
@@ -77,8 +77,10 @@ router.put('/:id', auth, async (req, res) => {
     
     // Broadcast status change
     const io = req.app.get('io');
-    io.to(complaint.userId.toString()).emit('status_updated', complaint);
-    io.emit('complaint_updated', complaint); // Total update for admin
+    if (io) {
+      io.to(complaint.userId.toString()).emit('status_updated', complaint);
+      io.emit('complaint_updated', complaint); // Total update for admin
+    }
 
     res.json(complaint);
   } catch (error) {
@@ -102,7 +104,7 @@ router.post('/:id/comments', auth, async (req, res) => {
     
     // Broadcast new comment
     const io = req.app.get('io');
-    io.emit('new_comment', { complaintId: req.params.id, comment: populatedComment });
+    if (io) io.emit('new_comment', { complaintId: req.params.id, comment: populatedComment });
 
     res.status(201).json(populatedComment);
   } catch (error) {
