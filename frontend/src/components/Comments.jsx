@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/RealTimeContext';
@@ -10,7 +10,7 @@ const Comments = ({ complaintId }) => {
   const { token } = useAuth();
   const socket = useSocket();
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       const res = await axios.get(`http://localhost:5000/api/complaints/${complaintId}/comments`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -19,7 +19,7 @@ const Comments = ({ complaintId }) => {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [complaintId, token]);
 
   useEffect(() => {
     fetchComments();
@@ -35,7 +35,7 @@ const Comments = ({ complaintId }) => {
     return () => {
       if (socket) socket.off('new_comment');
     };
-  }, [complaintId, socket]);
+  }, [complaintId, fetchComments, socket]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,7 +45,7 @@ const Comments = ({ complaintId }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
       setText('');
-    } catch (err) {
+    } catch {
       alert('Failed to post comment');
     }
   };

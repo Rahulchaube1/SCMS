@@ -1,21 +1,20 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/RealTimeContext';
-import { LogOut, Filter, Search, BarChart3, PieChart as PieIcon, RefreshCw } from 'lucide-react';
+import { LogOut, Filter, Search, BarChart3 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import Comments from '../components/Comments';
 
 const AdminDashboard = () => {
-  const { user, token, logout } = useAuth();
+  const { token, logout } = useAuth();
   const socket = useSocket();
   const [complaints, setComplaints] = useState([]);
   const [filter, setFilter] = useState('');
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
 
-  const fetchAllComplaints = async () => {
+  const fetchAllComplaints = useCallback(async () => {
     try {
       const url = `http://localhost:5000/api/complaints?status=${filter}&search=${search}`;
       const res = await axios.get(url, {
@@ -25,11 +24,11 @@ const AdminDashboard = () => {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [filter, search, token]);
 
   useEffect(() => {
     fetchAllComplaints();
-  }, [filter, search]);
+  }, [fetchAllComplaints]);
 
   useEffect(() => {
     if (socket) {
@@ -50,14 +49,21 @@ const AdminDashboard = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      setLoading(true);
       await axios.put(`http://localhost:5000/api/complaints/${id}`, { status }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-    } catch (err) {
+    } catch {
       alert('Failed to update status');
-    } finally {
-      setLoading(false);
+    }
+  };
+
+  const updatePriority = async (id, priority) => {
+    try {
+      await axios.put(`http://localhost:5000/api/complaints/${id}`, { priority }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch {
+      alert('Failed to update priority');
     }
   };
 
@@ -87,6 +93,11 @@ const AdminDashboard = () => {
   };
 
   const COLORS = ['#d97706', '#2563eb', '#059669'];
+  const analyticsData = useMemo(() => ([
+    { name: 'Pending', value: complaints.filter((c) => c.status === 'Pending').length },
+    { name: 'In Progress', value: complaints.filter((c) => c.status === 'In Progress').length },
+    { name: 'Resolved', value: complaints.filter((c) => c.status === 'Resolved').length },
+  ]), [complaints]);
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -163,7 +174,7 @@ const AdminDashboard = () => {
                   </div>
                   <div style={{ flex: 1 }}>
                     <label style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Update Priority</label>
-                    <select value={c.priority} onChange={(e) => updateStatus(c._id, null, e.target.value)} style={{ marginBottom: 0, padding: '8px', fontSize: '0.85rem' }}>
+                    <select value={c.priority} onChange={(e) => updatePriority(c._id, e.target.value)} style={{ marginBottom: 0, padding: '8px', fontSize: '0.85rem' }}>
                       <option value="Low">Low</option>
                       <option value="Medium">Medium</option>
                       <option value="High">High</option>

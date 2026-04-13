@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/RealTimeContext';
-import { LogOut, PlusCircle, RefreshCw, MessageSquare } from 'lucide-react';
+import { LogOut, PlusCircle } from 'lucide-react';
 import Comments from '../components/Comments';
 
 const UserDashboard = () => {
@@ -12,7 +12,9 @@ const UserDashboard = () => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ title: '', description: '', category: 'General', priority: 'Medium' });
 
-  const fetchComplaints = async () => {
+  const fetchComplaints = useCallback(async () => {
+    if (!user?.userId) return;
+
     try {
       const res = await axios.get(`http://localhost:5000/api/complaints/user/${user.userId}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -21,7 +23,7 @@ const UserDashboard = () => {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [token, user?.userId]);
 
   const stats = useMemo(() => ({
     total: complaints.length,
@@ -31,7 +33,7 @@ const UserDashboard = () => {
 
   useEffect(() => {
     fetchComplaints();
-  }, []);
+  }, [fetchComplaints]);
 
   useEffect(() => {
     if (socket) {
@@ -52,7 +54,7 @@ const UserDashboard = () => {
       });
       setShowForm(false);
       fetchComplaints();
-    } catch (err) {
+    } catch {
       alert('Failed to submit complaint');
     }
   };

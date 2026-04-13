@@ -24,7 +24,7 @@ const Signup = () => {
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
       window.location.href = '/'; // Simple logic for signup page
-    } catch (err) {
+    } catch {
       alert('Guest login failed');
     }
   };

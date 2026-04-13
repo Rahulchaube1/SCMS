@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
 
@@ -6,24 +6,26 @@ const RealTimeContext = createContext();
 
 export const RealTimeProvider = ({ children }) => {
   const { token, user } = useAuth();
-  const [socket, setSocket] = useState(null);
+  const socket = useMemo(() => {
+    if (!token || !user) return null;
+
+    const newSocket = io('http://localhost:5000', {
+      auth: { token }
+    });
+
+    newSocket.on('connect', () => {
+      console.log('Connected to Real-Time server');
+      newSocket.emit('join_room', user.userId);
+    });
+
+    return newSocket;
+  }, [token, user]);
 
   useEffect(() => {
-    if (token && user) {
-      const newSocket = io('http://localhost:5000', {
-        auth: { token }
-      });
-
-      newSocket.on('connect', () => {
-        console.log('Connected to Real-Time server');
-        newSocket.emit('join_room', user.userId);
-      });
-
-      setSocket(newSocket);
-
-      return () => newSocket.close();
-    }
-  }, [token, user]);
+    return () => {
+      if (socket) socket.close();
+    };
+  }, [socket]);
 
   return (
     <RealTimeContext.Provider value={socket}>

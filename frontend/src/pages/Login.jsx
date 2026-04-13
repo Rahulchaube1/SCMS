@@ -25,7 +25,7 @@ const Login = () => {
       const res = await axios.post('http://localhost:5000/api/auth/guest-login');
       login(res.data);
       navigate('/');
-    } catch (err) {
+    } catch {
       alert('Guest login failed');
     }
   };
